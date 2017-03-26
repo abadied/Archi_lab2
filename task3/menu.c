@@ -54,7 +54,7 @@ char my_get(char c){
 char* map(char *array, int array_length, char (*f) (char)){
   char* mapped_array = (char*)(malloc(array_length*sizeof(char)));
   for(int i = 0;i < array_length ; i++){
-      *(mapped_array + i) = (f(*(array + i)));
+      *(mapped_array + i) = f(*(array + i));
   }
   return mapped_array;
 }
@@ -66,27 +66,36 @@ char quit(char c){
 
 int main(int argc, char** argv){
     int inbounds = 1;
-    char carray[5] = "";
+    char carray[5] = {0,0,0,0,0};
     char c;
     
     struct func_desc menu[] = {{"Censor", censor},{"Encrypt", encrypt},{"Decrypt", decrypt},{"Print hex", xprt},{"Print string", cprt},{"Get string", my_get},{"Quit", quit},{NULL,NULL}};
     while(inbounds){
+        char* s;
         printf("Please choose a function: \n");
         for(int i = 0; i < 7 ; i++){
             printf("%d) %s \n",i,menu[i].name);
         }
         printf("Option: ");
+    
         c = fgetc(stdin);
+        fgetc(stdin);
         if( c >= '0' && c <= '6'){
             printf("Within bounds \n");
-            printf("%s",map(carray, 5 ,menu[c - '0'].fun));
+            s = map(carray, 5 ,menu[c - '0'].fun);
+            
+            for(int i = 0;i < 5;i++){
+                carray[i] = *(s + i);
+            }
+            free(s);
+            printf("%c",carray[0]);
             printf("DONE. \n \n");
         }
         else{
-            printf("\nNot within bounds \n");
+            printf("Not within bounds \n");
             inbounds = 0;
         }
-            
+        
     }
     
 }
